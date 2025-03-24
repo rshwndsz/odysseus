@@ -1,0 +1,22 @@
+# From ft_llama32-1b_ev9sz62l-2
+
+model_id: "unsloth/Llama-3.2-3B-Instruct"
+
+max_length: 8196
+quantization_bits: 8
+
+lora_r: 8
+lora_alpha: 64
+lora_dropout: 0.0
+
+num_epochs: 8
+batch_size: 4
+gradient_accumulation_steps: 2
+logging_steps: 1
+eval_steps: 128
+save_steps: 512
+early_stopping_patience: 8
+
+learning_rate: 0.00000175688634632561
+weight_decay: 0.026447791101207093
+lr_scheduler_type: "cosine_with_restarts"

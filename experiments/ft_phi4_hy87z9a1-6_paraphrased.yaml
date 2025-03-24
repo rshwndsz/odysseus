@@ -1,0 +1,22 @@
+# https://wandb.ai/rshwndsz/odysseus/runs/v2cmvsq3
+
+model_id: "microsoft/phi-4"
+dataset_dir: "./data/dataset_paraphrased"
+
+dynamic_padding: True
+max_length: 8196
+quantization_bits: 4
+
+lora_r: 128
+lora_alpha: 16
+lora_dropout: 0.032400704488357204
+
+num_epochs: 8
+batch_size: 2
+gradient_accumulation_steps: 1
+
+learning_rate: 0.00002345481288954896
+weight_decay: 0.055055889995290985
+lr_scheduler_type: "reduce_lr_on_plateau"
+
+early_stopping_patience: 100

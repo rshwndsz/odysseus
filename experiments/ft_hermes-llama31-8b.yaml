@@ -1,0 +1,21 @@
+# From mistral-7b_m6kj82sv-22
+
+model_id: "NousResearch/Hermes-3-Llama-3.1-8B"
+
+dynamic_padding: True
+max_length: 8196
+quantization_bits: 8
+
+lora_r: 128
+lora_alpha:  32
+lora_dropout: 0.0523197125077965
+
+num_epochs: 8
+batch_size: 2
+gradient_accumulation_steps: 4
+
+learning_rate: 0.00000012237949615911
+weight_decay: 0.09764846169586576
+lr_scheduler_type: "cosine_with_restarts"
+
+early_stopping_patience: 1000

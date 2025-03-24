@@ -1,0 +1,5 @@
+model_id: "NousResearch/Hermes-3-Llama-3.2-3B"
+dynamic_padding: True
+max_length: 8196
+quantization_bits: 8
+batch_size: 16

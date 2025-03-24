@@ -1,0 +1,22 @@
+# https://wandb.ai/rshwndsz/odysseus/runs/zez94s63
+
+model_id: "microsoft/Phi-3.5-mini-instruct"
+dataset_dir: "./data/dataset_paraphrased"
+
+dynamic_padding: True
+max_length: 8196
+quantization_bits: 4
+
+lora_r: 64
+lora_alpha: 64
+lora_dropout: 0.040290225164327904
+
+num_epochs: 8
+batch_size: 2
+gradient_accumulation_steps: 1
+
+learning_rate: 0.00012128399498328516
+weight_decay: 0.013731274279412163
+lr_scheduler_type: "cosine"
+
+early_stopping_patience: 100

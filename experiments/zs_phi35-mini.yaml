@@ -1,0 +1,5 @@
+model_id: "microsoft/Phi-3.5-mini-instruct"
+dynamic_padding: True
+max_length: 8196
+quantization_bits: 4
+batch_size: 2

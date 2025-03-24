@@ -1,0 +1,5 @@
+model_id: "allenai/longformer-base-4096"
+dynamic_padding: True
+max_length: 8196
+batch_size: 2
+quantization_bits: null

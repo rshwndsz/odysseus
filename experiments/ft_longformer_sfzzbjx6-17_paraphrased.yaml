@@ -1,0 +1,26 @@
+# https://wandb.ai/rshwndsz/odysseus/runs/ivogedxx
+
+model_id: "allenai/longformer-base-4096"
+dataset_dir: "./data/dataset_paraphrased"
+
+# max_pos_emb is 4096 tho
+max_length: 8196
+
+num_epochs: 8
+batch_size: 4
+gradient_accumulation_steps: 1
+
+quantization_bits: null
+lora_r: null
+lora_alpha: null
+lora_dropout: null
+
+logging_steps: 1
+eval_steps: 128
+save_steps: 512
+
+learning_rate: 0.00000450805077241562 
+weight_decay: 0.0110374488729021
+lr_scheduler_type: "cosine_with_restarts"
+
+early_stopping_patience: 50

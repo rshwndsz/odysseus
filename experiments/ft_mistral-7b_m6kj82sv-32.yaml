@@ -1,0 +1,19 @@
+# https://wandb.ai/rshwndsz/odysseus/runs/ew05j7b9
+
+model_id: "mistralai/Mistral-7B-Instruct-v0.3"
+
+dynamic_padding: True
+max_length: 8196
+quantization_bits: 4
+
+lora_r: 16
+lora_alpha: 64
+lora_dropout: 0.21427440623463695
+
+num_epochs: 8
+batch_size: 2
+gradient_accumulation_steps: 2
+
+learning_rate: 0.00006869345706442717
+weight_decay: 0.003636611702018352
+lr_scheduler_type: "cosine"

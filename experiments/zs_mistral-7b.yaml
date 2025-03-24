@@ -1,0 +1,5 @@
+model_id: "mistralai/Mistral-7B-Instruct-v0.3"
+dynamic_padding: True
+max_length: 8196
+quantization_bits: 4
+batch_size: 2
