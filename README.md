@@ -3,7 +3,7 @@
 A rigorous psychometric approach is crucial for the accurate measurement of mind-reading abilities. Traditional scoring methods for such tests, which involve lengthy free-text responses, require considerable time and human effort. This study investigates the use of large language models (LLMs) to automate the scoring of psychometric tests. Data were collected from participants aged 13 to 30 years and scored by trained human coders to establish a benchmark. We evaluated multiple LLMs against human assessments, exploring various prompting strategies to optimize performance and fine-tuning the models using a subset of the collected data to enhance accuracy. Our results demonstrate that LLMs can assess advanced mind-reading abilities with over 90\% accuracy on average. Notably, in most test items, the LLMs achieved higher Kappa agreement with the lead coder than two trained human coders, highlighting their potential to reliably score open-response psychometric tests.
 
 ## Dataset
-| Base Model  | Link |
+| Description | Link |
 | ------------- | ------------- |
 | Base  | [🤗 rshwndsz/ToM-auto-scoring-base](https://huggingface.co/datasets/rshwndsz/ToM-auto-scoring-base) |
 | With Paraphrasing  | [🤗 rshwndsz/ToM-auto-scoring-paraphrased](https://huggingface.co/datasets/rshwndsz/ToM-auto-scoring-paraphrased)  |
@@ -27,3 +27,45 @@ A rigorous psychometric approach is crucial for the accurate measurement of mind
 | microsoft/Phi-3.5-mini-instruct | [🤗 rshwndsz/ft_paraphrased-mistral-7b-v0.3-instruct](https://huggingface.co/rshwndsz/ft_paraphrased-mistral-7b-v0.3-instruct) |
 | mistralai/Mistral-7B-v0.3-Instruct | [🤗 rshwndsz/ft_paraphrased-phi-3.5-mini-instruct](https://huggingface.co/rshwndsz/ft_paraphrased-phi-3.5-mini-instruct) |
 | microsoft/phi-4 | [🤗 rshwndsz/ft_paraphrased-phi-4](https://huggingface.co/rshwndsz/ft_paraphrased-phi-4) |
+
+## Usage
+
+Install `uv`
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Create a new virtual environment 
+```bash
+uv venv .venv --python python3.10 --prompt odysseus
+```
+
+Change or create a new config file in `experiments`.
+
+To benchmark zero-shot performance
+
+```console
+(odysseus) $ chmod +x scripts/zeroshot.sh
+(odysseus) $ ./scripts/zeroshot.sh
+```
+
+To run a hyperparameter search
+```console
+(odysseus) $ wandb sweep --project odysseus sweep_phi4.yaml
+(odysseus) $ chmod +x scripts/hpsearch.sh
+(odysseus) $ ./scripts/hpsearch.sh
+```
+
+To run a finetune
+```console
+(odysseus) $ chmod +x scripts/finetune.sh
+(odysseus) $ ./scripts/finetune.sh 
+```
+
+To compute per-story metrics
+```console
+(odysseus) $ chmod +x scripts/metrics.sh
+(odysseus) $ ./scripts/metrics.sh
+```
+
