@@ -18,3 +18,12 @@ A rigorous psychometric approach is crucial for the accurate measurement of mind
 | microsoft/Phi-3.5-mini-instruct | [🤗 rshwndsz/ft-mistral-7b-v0.3-instruct](https://huggingface.co/rshwndsz/ft-mistral-7b-v0.3-instruct) |
 | mistralai/Mistral-7B-v0.3-Instruct | [🤗 rshwndsz/ft-phi-3.5-mini-instruct](https://huggingface.co/rshwndsz/ft-phi-3.5-mini-instruct) |
 | microsoft/phi-4 | [🤗 rshwndsz/ft-phi-4](https://huggingface.co/rshwndsz/ft-phi-4) |
+
+### Finetuned with paraphrasing
+| Base Model  | Link |
+| ------------- | ------------- |
+| allenai/longformer-base-4096  | [🤗 rshwndsz/ft_paraphrased-longformer-base-4096](https://huggingface.co/rshwndsz/ft_paraphrased-longformer-base-4096) |
+| NousResearch/Hermes-3-Llama-3.2-3B  | [🤗 rshwndsz/ft_paraphrased-hermes-3-llama-3.2-3b](https://huggingface.co/rshwndsz/ft_paraphrased-hermes-3-llama-3.2-3b)  |
+| microsoft/Phi-3.5-mini-instruct | [🤗 rshwndsz/ft_paraphrased-mistral-7b-v0.3-instruct](https://huggingface.co/rshwndsz/ft_paraphrased-mistral-7b-v0.3-instruct) |
+| mistralai/Mistral-7B-v0.3-Instruct | [🤗 rshwndsz/ft_paraphrased-phi-3.5-mini-instruct](https://huggingface.co/rshwndsz/ft_paraphrased-phi-3.5-mini-instruct) |
+| microsoft/phi-4 | [🤗 rshwndsz/ft_paraphrased-phi-4](https://huggingface.co/rshwndsz/ft_paraphrased-phi-4) |
