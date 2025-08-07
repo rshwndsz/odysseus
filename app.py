@@ -7,6 +7,7 @@ import outlines
 import pandas as pd
 import torch
 from outlines import Generator
+from peft import PeftConfig, PeftModel
 from pydantic import BaseModel, ConfigDict
 from transformers import AutoModelForCausalLM, AutoModelForSequenceClassification, AutoTokenizer, BitsAndBytesConfig
 
@@ -74,17 +75,22 @@ def get_outlines_model(model_id: str, device_map: str = "auto", quantization_bit
 
     if "longformer" in model_id:
         hf_model = AutoModelForSequenceClassification.from_pretrained(model_id)
-    else:
-        hf_model = AutoModelForCausalLM.from_pretrained(
-            model_id, **{"device_map": device_map, "quantization_config": quantization_config}
-        )
-    hf_tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, clean_up_tokenization_spaces=True)
-
-    if "longformer" in model_id:
+        hf_tokenizer = AutoTokenizer.from_pretrained(model_id)
         return hf_model, hf_tokenizer
-    else:
-        model = outlines.from_transformers(hf_model, hf_tokenizer)
-        return model
+
+    peft_config = PeftConfig.from_pretrained(model_id)
+    base_model_id = peft_config.base_model_name_or_path
+
+    base_model = AutoModelForCausalLM.from_pretrained(
+        base_model_id,
+        device_map=device_map,
+        quantization_config=quantization_config,
+    )
+    hf_model = PeftModel.from_pretrained(base_model, model_id)
+    hf_tokenizer = AutoTokenizer.from_pretrained(base_model_id, use_fast=True, clean_up_tokenization_spaces=True)
+
+    model = outlines.from_transformers(hf_model, hf_tokenizer)
+    return model
 
 
 def format_prompt(story: str, question: str, grading_scheme: str, answer: str) -> str:
