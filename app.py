@@ -1,15 +1,14 @@
-import gradio as gr
-import pandas as pd
-import torch
 import logging
 import textwrap
-
-import outlines
-from outlines import Generator
-from pydantic import BaseModel, ConfigDict
 from typing import Literal, Optional
 
-from transformers import BitsAndBytesConfig
+import gradio as gr
+import outlines
+import pandas as pd
+import torch
+from outlines import Generator
+from pydantic import BaseModel, ConfigDict
+from transformers import AutoModelForCausalLM, AutoModelForSequenceClassification, AutoTokenizer, BitsAndBytesConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,9 +48,11 @@ PROMPT_TEMPLATE = textwrap.dedent("""
 
 Score:""").strip()
 
+
 class ResponseModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
     score: Literal["0", "1"]
+
 
 def get_outlines_model(model_id: str, device_map: str = "auto", quantization_bits: Optional[int] = 4):
     if quantization_bits == 4:
@@ -66,12 +67,18 @@ def get_outlines_model(model_id: str, device_map: str = "auto", quantization_bit
     else:
         quantization_config = None
 
-    model = outlines.from_transformers(
-        model_id,
-        model_kwargs={"device_map": device_map, "quantization_config": quantization_config},
-        tokenizer_kwargs={"clean_up_tokenization_spaces": True},
-    )
+    if "longformer" in model_id:
+        print("Using Sequence Classification Model")
+        hf_model = AutoModelForSequenceClassification.from_pretrained(model_id)
+    else:
+        hf_model = AutoModelForCausalLM.from_pretrained(
+            model_id, **{"device_map": device_map, "quantization_config": quantization_config}
+        )
+    hf_tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, clean_up_tokenization_spaces=True)
+
+    model = outlines.from_transformers(hf_model, hf_tokenizer)
     return model
+
 
 def format_prompt(story: str, question: str, grading_scheme: str, answer: str) -> str:
     prompt = PROMPT_TEMPLATE.format(
@@ -83,42 +90,63 @@ def format_prompt(story: str, question: str, grading_scheme: str, answer: str) -
     full_prompt = SYSTEM_PROMPT + "\n\n" + prompt
     return full_prompt
 
-def label_responses(story, question, criteria, response_file):
+
+def label_single_response(story, question, criteria, response):
+    prompt = format_prompt(story, question, criteria, response)
+    model_id = "rshwndsz/ft-longformer-base-4096"
+    device_map = "auto"
+    quantization_bits = None
+    temperature = 0.0
+    model = get_outlines_model(model_id, device_map, quantization_bits)
+    generator = Generator(model)
+    with torch.no_grad():
+        result = generator(prompt)
+    return result.score
+
+
+def label_multi_responses(story, question, criteria, response_file):
     df = pd.read_csv(response_file.name)
     assert "response" in df.columns, "CSV must contain a 'response' column."
-
-    prompts = [
-        format_prompt(story, question, criteria, resp)
-        for resp in df["response"]
-    ]
-
-    model_id = "meta-llama/Meta-Llama-3-8B-Instruct"  # replace if needed
+    prompts = [format_prompt(story, question, criteria, resp) for resp in df["response"]]
+    model_id = "rshwndsz/ft-longformer-base-4096"
     device_map = "auto"
-    quantization_bits = 4
+    quantization_bits = None
     temperature = 0.0
-
     model = get_outlines_model(model_id, device_map, quantization_bits)
-    generator = Generator(model, temperature=temperature)
-
+    generator = Generator(model)
     with torch.no_grad():
         results = generator(prompts)
-    
     scores = [r.score for r in results]
     df["score"] = scores
-
     return df
 
-iface = gr.Interface(
-    fn=label_responses,
+
+single_tab = gr.Interface(
+    fn=label_single_response,
     inputs=[
-        gr.Textbox(label="Story", lines=6, placeholder="Enter the story..."),
-        gr.Textbox(label="Question", lines=2, placeholder="Enter the question..."),
-        gr.Textbox(label="Criteria (Grading Scheme)", lines=4, placeholder="Enter the evaluation criteria..."),
+        gr.Textbox(label="Story", lines=6),
+        gr.Textbox(label="Question", lines=2),
+        gr.Textbox(label="Criteria (Grading Scheme)", lines=4),
+        gr.Textbox(label="Single Response", lines=3),
+    ],
+    outputs=gr.Textbox(label="Score"),
+)
+
+multi_tab = gr.Interface(
+    fn=label_multi_responses,
+    inputs=[
+        gr.Textbox(label="Story", lines=6),
+        gr.Textbox(label="Question", lines=2),
+        gr.Textbox(label="Criteria (Grading Scheme)", lines=4),
         gr.File(label="Responses CSV (.csv with 'response' column)", file_types=[".csv"]),
     ],
     outputs=gr.Dataframe(label="Labeled Responses", type="pandas"),
+)
+
+iface = gr.TabbedInterface(
+    [single_tab, multi_tab],
+    ["Single Response", "Batch (CSV)"],
     title="Zero-Shot Evaluation Grader",
-    description="Upload a CSV with a 'response' column and provide the story, question, and grading criteria. The model will assign 0/1 scores.",
 )
 
 if __name__ == "__main__":
