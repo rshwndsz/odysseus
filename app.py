@@ -13,6 +13,11 @@ from transformers import AutoModelForCausalLM, AutoModelForSequenceClassificatio
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+MODEL_ID = "rshwndsz/ft-hermes-3-llama-3.2-3b"
+DEVICE_MAP = "auto"
+QUANTIZATION_BITS = None
+TEMPERATURE = 0.0
+
 
 SYSTEM_PROMPT = textwrap.dedent("""
 You are an assistant tasked with grading answers to a mind reading ability test. You will be provided with the following information:
@@ -68,7 +73,6 @@ def get_outlines_model(model_id: str, device_map: str = "auto", quantization_bit
         quantization_config = None
 
     if "longformer" in model_id:
-        print("Using Sequence Classification Model")
         hf_model = AutoModelForSequenceClassification.from_pretrained(model_id)
     else:
         hf_model = AutoModelForCausalLM.from_pretrained(
@@ -76,8 +80,11 @@ def get_outlines_model(model_id: str, device_map: str = "auto", quantization_bit
         )
     hf_tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, clean_up_tokenization_spaces=True)
 
-    model = outlines.from_transformers(hf_model, hf_tokenizer)
-    return model
+    if "longformer" in model_id:
+        return hf_model, hf_tokenizer
+    else:
+        model = outlines.from_transformers(hf_model, hf_tokenizer)
+        return model
 
 
 def format_prompt(story: str, question: str, grading_scheme: str, answer: str) -> str:
@@ -93,30 +100,41 @@ def format_prompt(story: str, question: str, grading_scheme: str, answer: str) -
 
 def label_single_response(story, question, criteria, response):
     prompt = format_prompt(story, question, criteria, response)
-    model_id = "rshwndsz/ft-longformer-base-4096"
-    device_map = "auto"
-    quantization_bits = None
-    temperature = 0.0
-    model = get_outlines_model(model_id, device_map, quantization_bits)
-    generator = Generator(model)
-    with torch.no_grad():
-        result = generator(prompt)
-    return result.score
+
+    if "longformer" in MODEL_ID:
+        model, tokenizer = get_outlines_model(MODEL_ID, DEVICE_MAP, QUANTIZATION_BITS)
+        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True)
+        with torch.no_grad():
+            logits = model(**inputs).logits
+        predicted_class = torch.argmax(logits, dim=1).item()
+        return str(predicted_class)
+    else:
+        model = get_outlines_model(MODEL_ID, DEVICE_MAP, QUANTIZATION_BITS)
+        generator = Generator(model)
+        with torch.no_grad():
+            result = generator(prompt)
+        return result.score
 
 
 def label_multi_responses(story, question, criteria, response_file):
     df = pd.read_csv(response_file.name)
     assert "response" in df.columns, "CSV must contain a 'response' column."
     prompts = [format_prompt(story, question, criteria, resp) for resp in df["response"]]
-    model_id = "rshwndsz/ft-longformer-base-4096"
-    device_map = "auto"
-    quantization_bits = None
-    temperature = 0.0
-    model = get_outlines_model(model_id, device_map, quantization_bits)
-    generator = Generator(model)
-    with torch.no_grad():
-        results = generator(prompts)
-    scores = [r.score for r in results]
+
+    if "longformer" in MODEL_ID:
+        model, tokenizer = get_outlines_model(MODEL_ID, DEVICE_MAP, QUANTIZATION_BITS)
+        inputs = tokenizer(prompts, return_tensors="pt", truncation=True, padding=True)
+        with torch.no_grad():
+            logits = model(**inputs).logits
+        predicted_classes = torch.argmax(logits, dim=1).tolist()
+        scores = [str(cls) for cls in predicted_classes]
+    else:
+        model = get_outlines_model(MODEL_ID, DEVICE_MAP, QUANTIZATION_BITS)
+        generator = Generator(model)
+        with torch.no_grad():
+            results = generator(prompts)
+        scores = [r.score for r in results]
+
     df["score"] = scores
     return df
 
