@@ -1,4 +1,6 @@
-# Automatic Scoring of an Open-Response Measure of Advanced Mind-Reading Using Large Language Models
+[_Odysseus_](https://en.wikipedia.org/wiki/Odysseus) - navigating the minds of others is its own epic journey.
+
+## Automatic Scoring of an Open-Response Measure of Advanced Mind-Reading Using LLMs
 
 A rigorous psychometric approach is crucial for the accurate measurement of mind-reading abilities. 
 Traditional scoring methods for such tests, which involve lengthy free-text responses, require considerable time and human effort. 
