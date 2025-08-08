@@ -1,12 +1,20 @@
-# ToM-automatic-scoring-using-LLMs
+# Automatic Scoring of an Open-Response Measure of Advanced Mind-Reading Using Large Language Models
 
-A rigorous psychometric approach is crucial for the accurate measurement of mind-reading abilities. Traditional scoring methods for such tests, which involve lengthy free-text responses, require considerable time and human effort. This study investigates the use of large language models (LLMs) to automate the scoring of psychometric tests. Data were collected from participants aged 13 to 30 years and scored by trained human coders to establish a benchmark. We evaluated multiple LLMs against human assessments, exploring various prompting strategies to optimize performance and fine-tuning the models using a subset of the collected data to enhance accuracy. Our results demonstrate that LLMs can assess advanced mind-reading abilities with over 90\% accuracy on average. Notably, in most test items, the LLMs achieved higher Kappa agreement with the lead coder than two trained human coders, highlighting their potential to reliably score open-response psychometric tests.
+A rigorous psychometric approach is crucial for the accurate measurement of mind-reading abilities. 
+Traditional scoring methods for such tests, which involve lengthy free-text responses, require considerable time and human effort. 
+This study investigates the use of large language models (LLMs) to automate the scoring of psychometric tests. 
+Data were collected from participants aged 13 to 30 years and scored by trained human coders to establish a benchmark. 
+We evaluated multiple LLMs against human assessments, exploring various prompting strategies to optimize performance and fine-tuning the models using a subset of the collected data to enhance accuracy. 
+Our results demonstrate that LLMs can assess advanced mind-reading abilities with over 90\% accuracy on average. 
+Notably, in most test items, the LLMs achieved higher Kappa agreement with the lead coder than two trained human coders, highlighting their potential to reliably score open-response psychometric tests.
+
+>[!NOTE]
+> Read our paper at [https://aclanthology.org/2025.clpsych-1.7](https://aclanthology.org/2025.clpsych-1.7)
 
 ## Dataset
 | Description | Link |
 | ------------- | ------------- |
 | Base  | [🤗 rshwndsz/ToM-auto-scoring-base](https://huggingface.co/datasets/rshwndsz/ToM-auto-scoring-base) |
-| With Paraphrasing  | [🤗 rshwndsz/ToM-auto-scoring-paraphrased](https://huggingface.co/datasets/rshwndsz/ToM-auto-scoring-paraphrased)  |
 
 ## Models
 
@@ -69,3 +77,36 @@ To compute per-story metrics
 (odysseus) $ ./scripts/metrics.sh
 ```
 
+
+## Citation
+To cite this work, please use the following BibTeX entry:
+```bibtex
+@inproceedings{wang-etal-2025-automatic,
+    title = "Automatic Scoring of an Open-Response Measure of Advanced Mind-Reading Using Large Language Models",
+    author = "Wang, Yixiao  and
+      Dsouza, Russel  and
+      Lee, Robert  and
+      Apperly, Ian  and
+      Devine, Rory  and
+      van der Kleij, Sanne  and
+      Lee, Mark",
+    editor = "Zirikly, Ayah  and
+      Yates, Andrew  and
+      Desmet, Bart  and
+      Ireland, Molly  and
+      Bedrick, Steven  and
+      MacAvaney, Sean  and
+      Bar, Kfir  and
+      Ophir, Yaakov",
+    booktitle = "Proceedings of the 10th Workshop on Computational Linguistics and Clinical Psychology (CLPsych 2025)",
+    month = may,
+    year = "2025",
+    address = "Albuquerque, New Mexico",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.clpsych-1.7/",
+    doi = "10.18653/v1/2025.clpsych-1.7",
+    pages = "79--89",
+    ISBN = "979-8-89176-226-8",
+    abstract = "A rigorous psychometric approach is crucial for the accurate measurement of mind-reading abilities. Traditional scoring methods for such tests, which involve lengthy free-text responses, require considerable time and human effort. This study investigates the use of large language models (LLMs) to automate the scoring of psychometric tests. Data were collected from participants aged 13 to 30 years and scored by trained human coders to establish a benchmark. We evaluated multiple LLMs against human assessments, exploring various prompting strate- gies to optimize performance and fine-tuning the models using a subset of the collected data to enhance accuracy. Our results demonstrate that LLMs can assess advanced mind-reading abilities with over 90{\%} accuracy on average. Notably, in most test items, the LLMs achieved higher Kappa agreement with the lead coder than two trained human coders, highlighting their potential to reliably score open-response psychometric tests."
+}
+```
